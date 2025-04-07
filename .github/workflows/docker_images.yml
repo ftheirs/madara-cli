@@ -6,10 +6,9 @@ on:
         description: 'The name of the image to build (e.g., madara, orchestrator, bootstrapper)'
         required: true
         default: 'madara'
-      organization:
-        description: 'The Docker Hub organization to publish to'
-        required: true
-        default: 'ftheirs'
+
+env:
+  DOCKER_ORGANIZATION: ftheirs
 
 jobs:
   build_docker_image:
@@ -21,10 +20,6 @@ jobs:
       - name: Set image name from input
         id: image_name
         run: echo "name=${{ github.event.inputs.image_name }}" >> $GITHUB_OUTPUT
-      
-      - name: Set organization name
-        id: org_name
-        run: echo "org=${{ github.event.inputs.organization }}" >> $GITHUB_OUTPUT
       
       - name: Git commit hash
         id: hash
@@ -48,4 +43,4 @@ jobs:
           context: deps/${{ steps.image_name.outputs.name }}
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ steps.org_name.outputs.org }}/${{ steps.image_name.outputs.name }}:${{ steps.hash.outputs.hash }},${{ steps.org_name.outputs.org }}/${{ steps.image_name.outputs.name }}:latest
+          tags: ${{ env.DOCKER_ORGANIZATION }}/${{ steps.image_name.outputs.name }}:${{ steps.hash.outputs.hash }},${{ env.DOCKER_ORGANIZATION }}/${{ steps.image_name.outputs.name }}:latest
