@@ -2,24 +2,24 @@ name: "Build and Publish Docker Images"
 on:
   workflow_dispatch:
     inputs:
-      image_name:
-        description: 'The name of the image to build (e.g., madara, orchestrator, bootstrapper)'
+      version:
+        description: 'Version tag (e.g., v1.0.0)'
         required: true
-        default: 'madara'
+        default: 'v1.0.0'
 
 env:
   DOCKER_ORGANIZATION: ftheirs
 
 jobs:
-  build_docker_image:
+  build_docker_images:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: ["anvil", "fake_anvil", "fake_anvil2"]
+      max-parallel: 1
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
-      - name: Set image name from input
-        id: image_name
-        run: echo "name=${{ github.event.inputs.image_name }}" >> $GITHUB_OUTPUT
       
       - name: Git commit hash
         id: hash
@@ -40,7 +40,9 @@ jobs:
       - name: Build image
         uses: docker/build-push-action@v4
         with:
-          context: deps/${{ steps.image_name.outputs.name }}
+          context: deps/${{ matrix.image }}
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ env.DOCKER_ORGANIZATION }}/${{ steps.image_name.outputs.name }}:${{ steps.hash.outputs.hash }},${{ env.DOCKER_ORGANIZATION }}/${{ steps.image_name.outputs.name }}:latest
+          tags: |
+            ${{ env.DOCKER_ORGANIZATION }}/${{ matrix.image }}:latest
+            ${{ env.DOCKER_ORGANIZATION }}/${{ matrix.image }}:${{ matrix.image }}_${{ steps.hash.outputs.hash }}_${{ github.event.inputs.version }}
