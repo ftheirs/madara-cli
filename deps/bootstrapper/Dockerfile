@@ -127,7 +127,7 @@ RUN npm install -g --unsafe-perm ganache@7.9.0
 
 WORKDIR /app
 
-RUN git clone --recurse-submodules https://github.com/madara-alliance/madara-bootstrapper.git .
+RUN git clone --branch monorepo/bootstrapper --recurse-submodules https://github.com/madara-alliance/madara.git .
 
 RUN make setup-linux
 
@@ -144,6 +144,12 @@ RUN . "$HOME/.asdf/asdf.sh" && \
 COPY --from=starkgate_contracts_legacy /app/build/Release/src/starkware/starknet/apps/starkgate/artifacts/cairo/token_bridge_1.json /app/artifacts/legacy_token_bridge.json
 COPY --from=starkgate_contracts_legacy /app/build/Release/src/starkware/starknet/std_contracts/upgradability_proxy/proxy.json /app/artifacts/proxy_starkgate.json
 COPY --from=starkgate_contracts_legacy /app/build/Release/src/starkware/starknet/std_contracts/ERC20/ERC20.json /app/artifacts/ERC20.json
+
+# Enable forge optimizer
+RUN mkdir -p /root/.foundry && \
+    echo '[profile.default]' > /root/.foundry/foundry.toml && \
+    echo 'optimizer = true' >> /root/.foundry/foundry.toml && \
+    echo 'optimizer_runs = 200' >> /root/.foundry/foundry.toml
 
 RUN export PATH="/usr/local/bin:$PATH" && cargo build --release --workspace --bin madara-bootstrapper
 
