@@ -71,8 +71,7 @@ RUN apt-get update && apt-get install -y \
     sudo \
     libboost-all-dev \
     wget \
-    software-properties-common \
-    && rm -rf /var/lib/apt/lists/*
+    software-properties-common
 
 # Build solidity from source
 ENV SOLIDITY_VERSION=v0.8.20
@@ -168,7 +167,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 # Copy built artifacts
-COPY --from=builder /app/src/contracts/ /app/src/contracts/
+COPY --from=builder /app/bootstrapper/crates/bootstrapper/src/contracts/ /app/src/contracts/
 COPY --from=builder /app/target/release/madara-bootstrapper /app/
 COPY --from=builder /app/artifacts/ /app/artifacts/
 
