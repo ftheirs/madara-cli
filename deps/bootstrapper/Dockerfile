@@ -73,6 +73,14 @@ RUN apt-get update && apt-get install -y \
     wget \
     software-properties-common
 
+WORKDIR /app
+
+RUN git clone --branch monorepo/bootstrapper --recurse-submodules https://github.com/madara-alliance/madara.git .
+
+COPY --from=starkgate_contracts_legacy /app/build/Release/src/starkware/starknet/apps/starkgate/artifacts/cairo/token_bridge_1.json /app/artifacts/legacy_token_bridge.json
+COPY --from=starkgate_contracts_legacy /app/build/Release/src/starkware/starknet/std_contracts/upgradability_proxy/proxy.json /app/artifacts/proxy_starkgate.json
+COPY --from=starkgate_contracts_legacy /app/build/Release/src/starkware/starknet/std_contracts/ERC20/ERC20.json /app/artifacts/ERC20.json
+
 # Build solidity from source
 ENV SOLIDITY_VERSION=v0.8.20
 RUN git clone https://github.com/ethereum/solidity.git && \
@@ -124,9 +132,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
 # Install ganache
 RUN npm install -g --unsafe-perm ganache@7.9.0
 
-WORKDIR /app
 
-RUN git clone --branch monorepo/bootstrapper --recurse-submodules https://github.com/madara-alliance/madara.git .
 
 RUN make setup-linux
 
@@ -140,9 +146,7 @@ RUN . "$HOME/.asdf/asdf.sh" && \
     asdf install scarb 2.6.3 && \
     SOLC=/usr/local/bin/solc make argent-contracts-starknet
 
-COPY --from=starkgate_contracts_legacy /app/build/Release/src/starkware/starknet/apps/starkgate/artifacts/cairo/token_bridge_1.json /app/artifacts/legacy_token_bridge.json
-COPY --from=starkgate_contracts_legacy /app/build/Release/src/starkware/starknet/std_contracts/upgradability_proxy/proxy.json /app/artifacts/proxy_starkgate.json
-COPY --from=starkgate_contracts_legacy /app/build/Release/src/starkware/starknet/std_contracts/ERC20/ERC20.json /app/artifacts/ERC20.json
+
 
 # Enable forge optimizer
 RUN mkdir -p /root/.foundry && \
