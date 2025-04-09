@@ -46,6 +46,6 @@ jobs:
           push: true
           tags: |
             ${{ env.DOCKER_ORGANIZATION }}/${{ matrix.image }}:latest
-            ${{ env.DOCKER_ORGANIZATION }}/${{ matrix.image }}:${{ matrix.image }}_${{ steps.hash.outputs.hash }}_${{ github.event.inputs.version }}
+            ${{ env.DOCKER_ORGANIZATION }}/${{ matrix.image }}:${{ github.event.inputs.version }}-${{ steps.hash.outputs.hash }}
         # Continue on error to allow other jobs to complete
         continue-on-error: false
