@@ -15,8 +15,7 @@ jobs:
     runs-on: self-hosted
     strategy:
       matrix:
-        # image: ["anvil", "bootstrapper", "madara", "orchestrator", "pathfinder"]
-        image: ["anvil"]
+        image: ["anvil", "bootstrapper", "madara", "orchestrator", "pathfinder"]
       # Set fail-fast to false to prevent cancellation of other jobs
       fail-fast: false
     steps:
