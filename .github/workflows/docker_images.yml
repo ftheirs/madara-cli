@@ -8,7 +8,7 @@ on:
         default: 'v1.0.0'
 
 env:
-  DOCKER_ORGANIZATION: madara-alliance
+  DOCKER_ORGANIZATION: ftheirs
 
 jobs:
   build_docker_images:
