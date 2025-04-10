@@ -22,6 +22,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
+      - name: Set image name from input
+        id: image_name
+        run: echo "name=${{ github.event.inputs.image_name }}" >> $GITHUB_OUTPUT
+      
+      - name: Set organization name
+        id: org_name
+        run: echo "org=${{ github.event.inputs.organization }}" >> $GITHUB_OUTPUT
+      
       - name: Git commit hash
         id: hash
         run: echo "hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
