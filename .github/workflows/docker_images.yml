@@ -6,6 +6,10 @@ on:
         description: 'Version tag (e.g., v1.0.0)'
         required: true
         default: 'v1.0.0'
+      specific_image:
+        description: 'Build only this image (leave empty to build all images)'
+        required: false
+        default: ''
 
 env:
   DOCKER_ORGANIZATION: ftheirs
@@ -15,7 +19,7 @@ jobs:
     runs-on: self-hosted
     strategy:
       matrix:
-        image: ["helper", "bootstrapper", "madara", "orchestrator", "pathfinder"]
+        image: ${{ github.event.inputs.specific_image == '' && fromJSON('["helper", "bootstrapper", "madara", "orchestrator", "pathfinder"]') || fromJSON(format('["{0}"]', github.event.inputs.specific_image)) }}
       # Set fail-fast to false to prevent cancellation of other jobs
       fail-fast: false
     steps:
